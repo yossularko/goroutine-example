@@ -21,6 +21,8 @@ func main() {
 
 	app.Get("/goroutine2", goRoutineService2)
 
+	app.Get("/goroutine3", goRoutineService3)
+
 	app.Listen(":3000")
 }
 
@@ -70,6 +72,16 @@ func goRoutineService2(c *fiber.Ctx) error {
 	goRoutineSeparate()
 
 	return c.SendString("Hello, go routine 2!")
+}
+
+func goRoutineService3(c *fiber.Ctx) error {
+	// tetap tereksekusi karena didalam lifecycle http (walaupun tanpa wait group)
+	go func() {
+		time.Sleep(time.Second * 3)
+		fmt.Println("Hello go routine without wait group")
+	}()
+
+	return c.SendString("Hello, go routine 3!")
 }
 
 func goRoutineSeparate() {
